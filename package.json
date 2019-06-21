@@ -4,16 +4,19 @@
   "description": "A Pathfinder application for Team 7433",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "electron-rebuild": "DEBUG=electron-rebuild electron-rebuild -w pathfinder1-jaci-js -v 5.0.2 "
   },
   "author": "GitHub",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron-rebuild": "^1.8.4"
+    "electron": "^5.0.2",
+    "electron-rebuild": "^1.8.5"
   },
   "dependencies": {
-    "electron": "^6.0.0-beta.1",
+    "angular": "^1.7.8",
     "electron-reload": "^1.4.0",
-    "pathfinder1-jaci-js": "^1.0.4"
+    "node-abi": "^2.8.0",
+    "pathfinder1-jaci-js": "^1.0.15"
   }
 }

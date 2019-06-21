@@ -1,0 +1,158 @@
+body {
+  background-color: #E5E5E5;
+  overflow: hidden;
+  margin: 0;
+}
+
+.pannel {
+  background-color: white;
+  border-radius: 10px;
+  margin: 0 20px 20px 0;
+}
+
+.pannel .pannel-body {
+  padding: 10px;
+}
+
+.canvas-pannel {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: auto 20px;
+      grid-template-columns: auto 20px;
+  background-color: white;
+  border-top-left-radius: 2px;
+  border-bottom-left-radius: 2px;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  border: white solid 5px;
+  width: -webkit-min-content;
+  width: -moz-min-content;
+  width: min-content;
+  margin: 0 20px 20px 0;
+}
+
+.canvas-pannel .pannel-body {
+  padding: 5px;
+}
+
+.canvas-pannel-error {
+  -webkit-animation: borderToRed 1s 1;
+          animation: borderToRed 1s 1;
+  border-color: red;
+}
+
+.canvas-pannel-error-remove {
+  -webkit-animation: borderToWhite 1s 1;
+          animation: borderToWhite 1s 1;
+  border-color: white;
+}
+
+.contentArea {
+  width: 100vw;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: min-content auto;
+      grid-template-columns: -webkit-min-content auto;
+      grid-template-columns: min-content auto;
+  -ms-grid-rows: auto;
+      grid-template-rows: auto;
+}
+
+.content {
+  height: 100vh;
+  padding: 20px 0 0 20px;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-rows: min-content max-content;
+      grid-template-rows: -webkit-min-content -webkit-max-content;
+      grid-template-rows: min-content max-content;
+}
+
+.content .TopPannels {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: min-content auto;
+      grid-template-columns: -webkit-min-content auto;
+      grid-template-columns: min-content auto;
+}
+
+.content .BottomPannels {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: min-content auto;
+      grid-template-columns: -webkit-min-content auto;
+      grid-template-columns: min-content auto;
+}
+
+.sidebar {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+}
+
+.sidebar .menuBar {
+  background-color: #2D2E2E;
+  width: 70px;
+  height: 100vh;
+}
+
+.sidebar .pathsDrawHandle {
+  background-color: #00A8FF;
+  width: 30px;
+  height: 100vh;
+}
+
+.sidebar .sectionsDrawHandle {
+  background-color: #007DBE;
+  width: 25px;
+  height: 100vh;
+}
+
+.VelocityPannel {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-rows: min-content min-content;
+      grid-template-rows: -webkit-min-content -webkit-min-content;
+      grid-template-rows: min-content min-content;
+}
+
+@-webkit-keyframes borderToRed {
+  from {
+    border-color: white;
+  }
+  to {
+    border-color: red;
+  }
+}
+
+@-webkit-keyframes borderToWhite {
+  from {
+    border-color: red;
+  }
+  to {
+    border-color: white;
+  }
+}
+
+@keyframes borderToRed {
+  from {
+    border-color: white;
+  }
+  to {
+    border-color: red;
+  }
+}
+
+@keyframes borderToWhite {
+  from {
+    border-color: red;
+  }
+  to {
+    border-color: white;
+  }
+}
+/*# sourceMappingURL=main.css.map */

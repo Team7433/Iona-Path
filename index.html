@@ -3,11 +3,77 @@
   <head>
     <meta charset="UTF-8">
     <title>Iona Path</title>
+    <script>
+        var angular = require('angular');
+    </script>
+    <link rel="stylesheet" href="./style/main.css">
   </head>
-  <body>
-    <canvas id="fieldView" width="500" height="500" style="background-color: gray;">
+  <body ng-app="myApp" ng-controller="myCtrl" scroll="none">
+    <div class="contentArea">
+        <div class="sidebar">
+          <div class="menuBar">
 
-    </canvas>
+          </div>
+          <div class="pathsDrawHandle">
+
+          </div>
+          <div class="sectionsDrawHandle">
+
+          </div>
+
+        </div>
+        <div class="content">
+          <div class="TopPannels">
+            <div class="canvas-pannel">
+              <div style="position: relative; height: 500px; width: 1000px;">
+                <canvas id="fieldView" width="1000" height="500" 
+                  style="position: absolute; left: 0; top: 0; z-index: 0; background: url('./images/DeepSpace.jpg'); background-size: cover;"></canvas>
+                <canvas id="pointsView" width="1000" height="500" ng-click="click()"
+                  style="position: absolute; left: 0; top: 0; z-index: 1;"></canvas>
+              </div>
+              <div class="pannel-body"></div>
+            </div>
+            <div class="pannel">
+              <div class="pannel-body">
+                Settings
+              </div>
+            </div>
+          </div>
+          <div class="BottomPannels">
+            <div class="pannel">
+              <div class="pannel-body">
+                <table>
+                  <tr>
+                    <td></td>
+                    <td>X</td>
+                    <td>Y</td>
+                    <td>Angle</td>
+                  </tr>
+                  <tr ng-repeat="point in points">
+                    <td><button ng-click="deletePoint(point)">-</button></td>
+                    <td><input type="number" ng-model="point[0]" ng-change="pointChange(point[0])"></td>
+                    <td><input type="number" ng-model="point[1]" ng-change="pointChange(point[1])"></td>
+                    <td><input type="number" ng-model="point[2]" ng-change="pointChange(point[2])"></td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td><input type="number" ng-model="addingPoint0" ng-Enter="addPoint()" id="firstAdd"></td>
+                    <td><input type="number" ng-model="addingPoint1" ng-Enter="addPoint()"></td>
+                    <td><input type="number" ng-model="addingPoint2" ng-Enter="addPoint()"></td>
+                    <td><button ng-click="addPoint()">Add</button></td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+            <div class="pannel">
+              <div class="pannel-body VelocityPannel">
+                Velocity
+                <canvas id="velocityCanvas" style="  width: 100%; height: 300px;"></canvas>
+              </div>
+            </div>
+          </div> 
+        </div>
+    </div>
     <script src="./renderer.js"></script>
   </body>
 </html>

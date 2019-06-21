@@ -1,14 +1,15 @@
 'use strict';
 
 // Modules to control application life and create native browser window
-const {app, BrowserWindow} = require('electron')
+const {app, BrowserWindow, Menu} = require('electron')
+const ipcMain = require('electron').ipcMain
 
 require('electron-reload')(__dirname);
+
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
-
 function createWindow () {
   // Create the browser window.
   //mainWindow = new BrowserWindow({width: 800, height: 600});
@@ -25,7 +26,7 @@ function createWindow () {
   mainWindow.loadFile('index.html');
 
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
@@ -56,3 +57,136 @@ app.on('activate', function () {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+
+const template = [
+  // { role: 'appMenu' }
+  ...(process.platform === 'darwin' ? [{
+    label: app.getName(),
+    submenu: [
+      { role: 'about' },
+      { type: 'separator' },
+      { role: 'services' },
+      { type: 'separator' },
+      { role: 'hide' },
+      { role: 'hideothers' },
+      { role: 'unhide' },
+      { type: 'separator' },
+      { role: 'quit' }
+    ]
+  }] : []),
+  // { role: 'fileMenu' }
+  {
+    label: 'File',
+    submenu: [
+      {
+        label:'New Path',
+        click() {
+          mainWindow.webContents.send('menu-new-path');
+          console.log('new Path');
+        },
+        accelerator: 'CmdOrCtrl+N'
+      },
+      {
+        label:'New Project',
+        click() {
+          mainWindow.webContents.send('menu-new-project');
+          console.log('new Project');
+        },
+        accelerator: 'CmdOrCtrl+Shift+N'
+      },
+      {type:'separator'},
+      {
+        label:'Save',
+        click() {
+          mainWindow.webContents.send('menu-Save');
+          console.log('saved');
+        },
+        accelerator: 'CmdOrCtrl+S'
+      },
+      {type:'separator'},
+      {
+        label:'Export',
+        click() {
+          mainWindow.webContents.send('menu-Export');
+          console.log('Export');
+        },
+        accelerator: 'CmdOrCtrl+E'
+      },
+      {
+        label:'Export Path',
+        click() {
+          mainWindow.webContents.send('menu-Export-Path');
+          console.log('Export Path');
+        },
+        accelerator: 'CmdOrCtrl+Shift+E'
+      },
+      {type:'separator'},
+      {
+        label:'Export To Robot',
+        click() {
+          mainWindow.webContents.send('menu-Robot');
+          console.log('Robot');
+        },
+        accelerator: 'CmdOrCtrl+D'
+      },
+      {
+        label:'Export Path To Robot',
+        click() {
+          mainWindow.webContents.send('menu-Robot-Path');
+          console.log('Robot Path');
+        },
+        accelerator: 'CmdOrCtrl+Shift+D'
+      },
+      {type:'separator'},
+      process.platform === 'darwin' ? { role: 'close' } : { role: 'quit' }
+    ]
+  },
+  { role: 'editMenu' },
+  // { role: 'viewMenu' }
+  {
+    label: 'View',
+    submenu: [
+      { role: 'reload' },
+      { role: 'forcereload' },
+      { role: 'toggledevtools' },
+      { type: 'separator' },
+      { role: 'resetzoom' },
+      { role: 'zoomin' },
+      { role: 'zoomout' },
+      { type: 'separator' },
+      { role: 'togglefullscreen' }
+    ]
+  },
+  // { role: 'windowMenu' }
+  {
+    label: 'Window',
+    submenu: [
+      { role: 'minimize' },
+      { role: 'zoom' },
+      ...(process.platform === 'darwin' ? [
+        { type: 'separator' },
+        { role: 'front' },
+        { type: 'separator' },
+        { role: 'window' }
+      ] : [
+        { role: 'close' }
+      ])
+    ]
+  },
+  {
+    role: 'help',
+    submenu: [
+      {
+        label: 'Learn More',
+        click () { require('electron').shell.openExternalSync('https://electronjs.org') }
+      }
+    ]
+  }
+]
+
+const menu = Menu.buildFromTemplate(template);
+Menu.setApplicationMenu(menu);
+
+ipcMain.on('get-user-path', (event, arg) => {
+  event.returnValue = app.getPath('userData');
+})

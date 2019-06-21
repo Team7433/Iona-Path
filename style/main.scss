@@ -1,0 +1,108 @@
+
+body {
+    background-color: #E5E5E5;
+    overflow: hidden;
+    margin: 0;
+}
+
+.pannel {
+    background-color: white;
+    border-radius: 10px;
+    .pannel-body {
+        padding: 10px;  
+    }
+    margin: 0 20px 20px 0;
+}
+
+.canvas-pannel {
+    display: grid;
+    grid-template-columns: auto 20px;
+    background-color: white;
+    border-top-left-radius: 2px;
+    border-bottom-left-radius: 2px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border: white solid 5px;
+    .pannel-body {
+        padding: 5px;  
+    }
+    width: min-content;
+    margin: 0 20px 20px 0;
+}
+.canvas-pannel-error {
+    animation: borderToRed 1s 1;
+    border-color: red;
+}
+.canvas-pannel-error-remove {
+    animation: borderToWhite 1s 1;
+    border-color: white;
+}
+
+.contentArea {
+    width: 100vw;
+    display: grid;
+    grid-template-columns: min-content auto;
+    grid-template-rows: auto;
+
+}
+
+.content {
+    height: 100vh;
+    padding: 20px 0 0 20px;
+    display: grid;
+    grid-template-rows: min-content max-content;
+
+    .TopPannels {
+        display: grid;
+        grid-template-columns: min-content auto;
+    }
+    .BottomPannels {
+        display: grid;
+        grid-template-columns: min-content auto;
+    }
+}
+
+.sidebar {
+    display: flex;
+    flex-direction: row;
+    .menuBar {
+        background-color: #2D2E2E;
+        width: 70px;
+        height: 100vh;
+    }
+    .pathsDrawHandle {
+        background-color: #00A8FF;
+        width: 30px;
+        height: 100vh;
+    }
+    .sectionsDrawHandle {
+        background-color: #007DBE;
+        width: 25px;
+        height: 100vh;
+    }
+}
+
+.VelocityPannel {
+    display: grid;
+    grid-template-rows: min-content min-content;
+}
+
+@-webkit-keyframes borderToRed {
+    from {border-color: white;}
+    to {border-color: red;}
+}
+
+@-webkit-keyframes borderToWhite {
+    from {border-color: red;}
+    to {border-color: white;}
+}
+@keyframes borderToRed {
+    from {border-color: white;}
+    to {border-color: red;}
+}
+
+@keyframes borderToWhite {
+    from {border-color: red;}
+    to {border-color: white;}
+}
+
