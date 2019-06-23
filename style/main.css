@@ -51,9 +51,8 @@ body {
   width: 100vw;
   display: -ms-grid;
   display: grid;
-  -ms-grid-columns: min-content auto;
-      grid-template-columns: -webkit-min-content auto;
-      grid-template-columns: min-content auto;
+  -ms-grid-columns: 125px auto;
+      grid-template-columns: 125px auto;
   -ms-grid-rows: auto;
       grid-template-rows: auto;
 }
@@ -94,22 +93,86 @@ body {
           flex-direction: row;
 }
 
-.sidebar .menuBar {
+.sidebar #menuBar {
   background-color: #2D2E2E;
   width: 70px;
   height: 100vh;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-rows: min-content auto min-content;
+      grid-template-rows: -webkit-min-content auto -webkit-min-content;
+      grid-template-rows: min-content auto min-content;
 }
 
-.sidebar .pathsDrawHandle {
+.sidebar #menuBar .bottomIcons {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: end;
+      -ms-flex-align: end;
+          align-items: flex-end;
+}
+
+.sidebar #pathsDrawHandle {
+  -webkit-transition: left 500ms;
+  transition: left 500ms;
   background-color: #00A8FF;
   width: 30px;
   height: 100vh;
+  display: -ms-grid;
+  display: grid;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  position: fixed;
+  left: 70px;
+  z-index: 2;
 }
 
-.sidebar .sectionsDrawHandle {
+.sidebar #sectionsDrawHandle {
   background-color: #007DBE;
   width: 25px;
   height: 100vh;
+  position: fixed;
+  left: 100px;
+  z-index: 2;
+  -webkit-transition: left 500ms;
+  transition: left 500ms;
+}
+
+.sidebar #pathsListBox {
+  width: 0;
+  height: 100vh;
+  background-color: #E5E5E5;
+  position: fixed;
+  z-index: 2;
+  left: 70px;
+  -webkit-transition: width 500ms, left 500ms;
+  transition: width 500ms, left 500ms;
+}
+
+.sidebar #pathsListBox #paths-box-body {
+  display: none;
+}
+
+.sidebar #pathsListBox #paths-box-body h3 {
+  margin: 5px;
+}
+
+.sidebar #sectionsListBox {
+  width: 0;
+  height: 100vh;
+  background-color: #E5E5E5;
+  position: fixed;
+  z-index: 2;
+  left: 100px;
+  -webkit-transition: width 500ms, left 500ms;
+  transition: width 500ms, left 500ms;
+}
+
+.sidebar #sectionsListBox #sections-box-body {
+  display: none;
+  padding: 5px;
 }
 
 .VelocityPannel {
@@ -154,5 +217,75 @@ body {
   to {
     border-color: white;
   }
+}
+
+.path-List-Item {
+  width: 100%;
+  background-color: transparent;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: auto;
+      grid-template-columns: auto;
+  cursor: pointer;
+}
+
+.path-List-Item span {
+  margin: 5px 0 5px 10px;
+  width: 100%;
+}
+
+.menuIcon {
+  color: white;
+  width: 32px;
+  padding: 19px;
+}
+
+.modal-back {
+  width: 100vw;
+  height: 100vh;
+  background: transparent;
+  position: absolute;
+  top: 0;
+  left: 0;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.modal-pannel {
+  background-color: white;
+  border-radius: 10px;
+  z-index: 10;
+}
+
+.modal-pannel .modal-body {
+  padding: 10px;
+  z-index: 11;
+}
+
+.modal-pannel .modal-close {
+  position: fixed;
+  width: 500px;
+  height: 400px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+  -webkit-box-align: start;
+      -ms-flex-align: start;
+          align-items: flex-start;
+}
+
+.modal-pannel .modal-close img {
+  z-index: 10;
+  height: 30px;
 }
 /*# sourceMappingURL=main.css.map */

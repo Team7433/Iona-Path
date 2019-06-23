@@ -4,7 +4,7 @@
 const {app, BrowserWindow, Menu} = require('electron')
 const ipcMain = require('electron').ipcMain
 
-require('electron-reload')(__dirname);
+require('electron-reload')(__dirname, {ignored: /ExampleProject|[\/\\]\./});
 
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -14,8 +14,8 @@ function createWindow () {
   // Create the browser window.
   //mainWindow = new BrowserWindow({width: 800, height: 600});
   mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1200,
+    height: 800,
     webPreferences: {
       nodeIntegration: true
     }
@@ -26,7 +26,7 @@ function createWindow () {
   mainWindow.loadFile('index.html');
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools()
+  //mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {

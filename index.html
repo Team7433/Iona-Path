@@ -11,18 +11,41 @@
   <body ng-app="myApp" ng-controller="myCtrl" scroll="none">
     <div class="contentArea">
         <div class="sidebar">
-          <div class="menuBar">
+          <div id="menuBar">
+            <div class="topIcons">
 
-          </div>
-          <div class="pathsDrawHandle">
+            </div>
+            <div class="iconspacer">
 
+            </div>
+            <div class="bottomIcons">
+              <img ng-click="projectSettingShow = true" class="menuIcon" src="./assets/cog-solid.svg" alt="">
+            </div>
           </div>
-          <div class="sectionsDrawHandle">
+          <div id="pathsListBox">
+            <div id="paths-box-body">
+              <h3>Paths</h3>
+              <div class="path-List-Item" ng-repeat="path in paths" ng-style="highlightSelected(path.selected)">
+                <span ng-show="path.enter" ng-click="path = clickPath(path)">{{path.name}}</span>
+                <input ng-hide="path.enter" focus-on="path.enter" type="text" ng-model="path.name" ng-Enter="path = ChangePathName(path); path.enter = true" ng-Focusout="path = ChangePathName(path); path.enter = true" class="pathNameChange">
+              </div>
+              <button ng-click="NewPath()">Add</button>
+            </div>
+          </div>
+          <div id="pathsDrawHandle">
+            <div id="changeIndicator" style="width: 10px; height: 10px; border-radius: 5px; background: white; margin: 10px; display: none"></div>
+          </div>
+          <div id="sectionsListBox">
+            <div id="sections-box-body">
+              Sections
+            </div>
+          </div>
+          <div id="sectionsDrawHandle">
 
           </div>
 
         </div>
-        <div class="content">
+        <div class="content" id="content">
           <div class="TopPannels">
             <div class="canvas-pannel">
               <div style="position: relative; height: 500px; width: 1000px;">
@@ -73,6 +96,33 @@
             </div>
           </div> 
         </div>
+    </div>
+    <div ng-show="projectSettingShow" class="modal-back">
+      <div class="modal-pannel" style="width: 500px; height: 400px;">
+        <!--<div class="modal-close"><img ng-click="projectSettingShow = false" src="./assets/close-solid.svg" alt="Close"></div>-->
+        <div class="modal-body">
+          Project Settings
+          <div class="projectSettings">
+            <div class="setting">
+              <span class="setting-text">Team Number</span>
+              <input type="number" ng-model="project.teamnumber" ng-blur="updateProjectSettings()">
+            </div>
+            <div class="setting">
+              <span class="setting-text">Wheel Base Width</span>
+              <input type="number" ng-model="project.wheelBase" ng-blur="updateProjectSettings()">
+            </div>
+            <div class="setting">
+              <span class="setting-text">Robot Type</span>
+              <select name="" id="">
+                <option value="tank">Tank</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div ng-show="projectSettingShow" ng-click="projectSettingShow = false" style="position: absolute; left: 0; top: 0; width: 100vw; height: 100vh; background-color: rgba(46, 46, 46, 0.39); z-index: 9;">
+
     </div>
     <script src="./renderer.js"></script>
   </body>

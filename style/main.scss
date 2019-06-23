@@ -41,7 +41,7 @@ body {
 .contentArea {
     width: 100vw;
     display: grid;
-    grid-template-columns: min-content auto;
+    grid-template-columns: 125px auto;
     grid-template-rows: auto;
 
 }
@@ -65,20 +65,63 @@ body {
 .sidebar {
     display: flex;
     flex-direction: row;
-    .menuBar {
+    #menuBar {
         background-color: #2D2E2E;
         width: 70px;
         height: 100vh;
+        display: grid;
+        grid-template-rows: min-content auto min-content;
+        .bottomIcons {
+            display: flex; align-items: flex-end;
+        }
     }
-    .pathsDrawHandle {
+    #pathsDrawHandle {
+        transition: left 500ms;
         background-color: #00A8FF;
         width: 30px;
         height: 100vh;
+        display: grid;
+        justify-content: center;
+        position: fixed;
+        left: 70px;
+        z-index: 2;
     }
-    .sectionsDrawHandle {
+    #sectionsDrawHandle {
         background-color: #007DBE;
         width: 25px;
         height: 100vh;
+        position: fixed;
+        left: 100px;
+        z-index: 2;
+        transition: left 500ms;
+    }
+    #pathsListBox {
+        width: 0;
+        height: 100vh;
+        background-color: #E5E5E5;
+        position: fixed;
+        z-index: 2;
+        left: 70px;
+        transition: width 500ms, left 500ms;
+        #paths-box-body {
+            display: none;
+            h3 {
+                margin: 5px;
+            }
+        }
+    }
+    #sectionsListBox {
+        width: 0;
+        height: 100vh;
+        background-color: #E5E5E5;
+        position: fixed;
+        z-index: 2;
+        left: 100px;
+        transition: width 500ms, left 500ms;
+        #sections-box-body {
+            display: none;
+            padding: 5px;
+        }
     }
 }
 
@@ -106,3 +149,54 @@ body {
     to {border-color: white;}
 }
 
+.path-List-Item {
+    width: 100%;
+    background-color: transparent;
+    display: grid;
+    grid-template-columns: auto;
+    cursor: pointer;
+    span {
+        margin: 5px 0 5px 10px;
+        width: 100%;
+    }
+}
+
+.menuIcon {
+    color: white;
+    width: 32px;
+    padding: 19px;
+}
+
+.modal-back {
+    width: 100vw;
+    height: 100vh;
+    background: transparent;
+    position: absolute;
+    top: 0;
+    left: 0;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
+.modal-pannel {
+    background-color: white;
+    border-radius: 10px;
+    z-index: 10;
+    .modal-body {
+        padding: 10px;
+        z-index: 11;
+    }
+    .modal-close {
+        position: fixed;
+        width: 500px;
+        height: 400px;
+        display: flex;
+        justify-content: flex-end;
+        align-items: flex-start;
+        img {
+            z-index: 10;
+            height: 30px;;
+        }
+    }
+}
