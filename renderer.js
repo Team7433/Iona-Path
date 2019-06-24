@@ -4,6 +4,7 @@ const { dialog } = require('electron').remote;
 const ipc = require('electron').ipcRenderer;
 const fs = require('fs');
 const Papa = require('papaparse');
+const Sortable = require('sortablejs');
 
 var angularApp = angular.module("myApp", []);
 
@@ -286,7 +287,20 @@ angularApp.controller("myCtrl", function($scope) {
     SetPoints();
     $scope.points = points;
     $scope.paths = pathsInDir;
-    $scope.project = projectSettings
+    $scope.project = projectSettings;
+    var el = document.getElementById('pointsListSortab');
+    var sortable = Sortable.create(el, {
+      handle: '.rearrangeHandle',
+      animation: 150,
+      onEnd: (evt) => {
+        points.splice(evt.newIndex, 0, points[evt.oldIndex]);
+        points.splice(evt.oldIndex + 1, 1);
+        $scope.points = points;
+        UpdatePath();
+        SetPoints();
+        SetChanges(true);
+      }
+    }); 
 
     $scope.pointChange = (value) => {
         if (value != null) {
@@ -296,6 +310,9 @@ angularApp.controller("myCtrl", function($scope) {
             SetChanges(true)
         }
     }
+    document.addEventListener('keydown', (e) => {
+      
+    })
 
     $scope.deletePoint = (point) => {
         for (let i = 0; i < points.length; i++) {
@@ -350,7 +367,6 @@ angularApp.controller("myCtrl", function($scope) {
                 mouseY < pointHandles[i].CurrentY+0.2 &&
                 mouseY > pointHandles[i].CurrentY-0.2
             ){
-                console.log("Dragging" + i);
                 pointHandles[i].dragging = true;
             }
             

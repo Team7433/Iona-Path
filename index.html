@@ -59,6 +59,18 @@
             <div class="pannel">
               <div class="pannel-body">
                 Settings
+                <div class="setting">
+                  <span class="setting-text">Max Velocity</span>
+                  <input type="number" ng-model="options.velocity" ng-blur="updatePathOptionsSettings()">
+                </div>
+                <div class="setting">
+                  <span class="setting-text">Max Acceleration</span>
+                  <input type="number" ng-model="options.acceleration" ng-blur="updatePathOptionsSettings()">
+                </div>
+                <div class="setting">
+                  <span class="setting-text">Max Jerk</span>
+                  <input type="number" ng-model="options.jerk" ng-blur="updatePathOptionsSettings()">
+                </div>
               </div>
             </div>
           </div>
@@ -67,19 +79,26 @@
               <div class="pannel-body">
                 <table>
                   <tr>
-                    <td></td>
-                    <td>X</td>
-                    <td>Y</td>
-                    <td>Angle</td>
+                    <td><div style="width: 15px;"></div></td>
+                    <td><div style="width: 133px;">X</div></td>
+                    <td><div style="width: 133px;">Y</div></td>
+                    <td><div style="width: 133px;">Angle</div></td>
                   </tr>
-                  <tr ng-repeat="point in points">
-                    <td><button ng-click="deletePoint(point)">-</button></td>
-                    <td><input type="number" ng-model="point[0]" ng-change="pointChange(point[0])"></td>
-                    <td><input type="number" ng-model="point[1]" ng-change="pointChange(point[1])"></td>
-                    <td><input type="number" ng-model="point[2]" ng-change="pointChange(point[2])"></td>
-                  </tr>
+                </table>
+                <div id="pointsListSortab">
+                  <table ng-repeat="point in points">
+                    <tr>
+                      <td><img class="rearrangeHandle" src="./assets/Rearrange.svg" width="15px;" alt=""></td>
+                      <td><input type="number" ng-model="point[0]" ng-change="pointChange(point[0])"></td>
+                      <td><input type="number" ng-model="point[1]" ng-change="pointChange(point[1])"></td>
+                      <td><input type="number" ng-model="point[2]" ng-change="pointChange(point[2])"></td>
+                      <td><button ng-click="deletePoint(point)">-</button></td>
+                    </tr>
+                  </table>
+                </div>
+                <table>
                   <tr>
-                    <td></td>
+                    <td><div style="width: 15px;"></div></td>
                     <td><input type="number" ng-model="addingPoint0" ng-Enter="addPoint()" id="firstAdd"></td>
                     <td><input type="number" ng-model="addingPoint1" ng-Enter="addPoint()"></td>
                     <td><input type="number" ng-model="addingPoint2" ng-Enter="addPoint()"></td>

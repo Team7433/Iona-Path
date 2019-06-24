@@ -18,6 +18,7 @@
     "electron-reload": "^1.4.0",
     "node-abi": "^2.8.0",
     "papaparse": "^5.0.0",
-    "pathfinder1-jaci-js": "^1.0.15"
+    "pathfinder1-jaci-js": "^1.0.15",
+    "sortablejs": "^1.10.0-rc2"
   }
 }
