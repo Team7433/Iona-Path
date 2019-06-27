@@ -3,6 +3,7 @@
 // Modules to control application life and create native browser window
 const {app, BrowserWindow, Menu} = require('electron')
 const ipcMain = require('electron').ipcMain
+var path = require('path')
 
 require('electron-reload')(__dirname, {ignored: /ExampleProject|[\/\\]\./});
 
@@ -18,7 +19,7 @@ function createWindow () {
     height: 800,
     webPreferences: {
       nodeIntegration: true
-    }
+    },
   })
 
   // and load the index.html of the app.

@@ -234,6 +234,11 @@ body {
   width: 100%;
 }
 
+.path-List-Item input {
+  margin: 5px 0 5px 10px;
+  height: 12px;
+}
+
 .menuIcon {
   color: white;
   width: 32px;

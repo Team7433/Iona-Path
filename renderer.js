@@ -5,6 +5,7 @@ const ipc = require('electron').ipcRenderer;
 const fs = require('fs');
 const Papa = require('papaparse');
 const Sortable = require('sortablejs');
+var Client = require('node-ftp');
 
 var angularApp = angular.module("myApp", []);
 
@@ -18,6 +19,7 @@ var fieldWidth = 8.23; //meters
 var mToCanvasScaler = canvas.height/fieldWidth;
 
 var points = [];
+var pathOptions;
 
 var mouseX;
 var mouseY;
@@ -53,7 +55,7 @@ if (fs.existsSync(currentProjectDir + 'settings.json')) {
 
   projectSettings = JSON.parse(projectSettingsFile);
 } else {
-  fs.writeFile(currentProjectDir + 'settings.json', JSON.stringify({ 'teamnumber': null, 'wheelBase': 0.7}), (err) => {
+  fs.writeFile(currentProjectDir + 'settings.json', JSON.stringify({ 'teamnumber': null, 'wheelBase': 0.7, 'timeStep': 0.02}), (err) => {
     if (err) throw err;
   })
 }
@@ -87,6 +89,14 @@ function openPath(path) {
     if (newPath == false) {
       currentPathData = JSON.parse(currentPathFile);
       points = currentPathData.Points;
+      pathOptions = currentPathData.options;
+      if (pathOptions == undefined) {
+        pathOptions = {
+          'velocity': 4.0,
+          'acceleration': 3.0,
+          'jerk': 5.0
+        }
+      }
     }
   }
 }
@@ -220,7 +230,8 @@ function pointHandle(color, x, y) {
 
 function UpdatePath() {
     if (points.length > 1) {
-        pathfinder.generateTank(points.length,points,0.02,4.0,3.0,5.0,(length,cntrTraj,leftTraj,rghtTraj) => {
+        pathfinder.generateTank(points.length,points,projectSettings.timeStep,pathOptions.velocity,pathOptions.acceleration,pathOptions.jerk,(length,cntrTraj,leftTraj,rghtTraj) => {
+            console.log(length);
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.beginPath();
             ctx.moveTo(cntrTraj[0].x*mToCanvasScaler, cntrTraj[0].y*mToCanvasScaler);
@@ -288,6 +299,8 @@ angularApp.controller("myCtrl", function($scope) {
     $scope.points = points;
     $scope.paths = pathsInDir;
     $scope.project = projectSettings;
+    $scope.options = pathOptions;
+    $scope.loaded = false;
     var el = document.getElementById('pointsListSortab');
     var sortable = Sortable.create(el, {
       handle: '.rearrangeHandle',
@@ -448,6 +461,7 @@ angularApp.controller("myCtrl", function($scope) {
         openPath(path);
         $scope.paths = pathsInDir;
         $scope.points = points;
+        $scope.options = pathOptions;
         UpdatePath();
         SetPoints();
         path.selected = true;
@@ -468,6 +482,27 @@ angularApp.controller("myCtrl", function($scope) {
         if (err) throw err;
       })
     }
+    $scope.updatePathOptionsSettings = () => {
+      pathOptions = $scope.options;
+      UpdatePath();
+      SetChanges(true);
+    }
+    $scope.testThing = () => {
+      var dis = 3;
+      var vel = 7;
+      var syxErr = false
+      try {
+        eval($scope.evalString); 
+      } catch (e) {
+          if (e instanceof SyntaxError || e instanceof ReferenceError) {
+              syxErr = true
+              console.log(e);
+          }
+      }
+      if (syxErr == false) {
+        console.log(eval($scope.evalString));
+      }
+    }
 });
 
 ipc.on('menu-Save', (event, message) => {
@@ -475,7 +510,8 @@ ipc.on('menu-Save', (event, message) => {
 
   var pathJson = {
       "Points": points,
-      "Name": currentPath.name
+      "Name": currentPath.name,
+      "options": pathOptions
   };
   
   var fileContent = JSON.stringify(pathJson);
@@ -504,11 +540,11 @@ ipc.on('menu-Export-Path', (event, message) => {
     if (filename == null) {
       console.log('exit Export');
     } else {
-      pathfinder.generateTank(points.length,points,0.02,4.0,3.0,5.0,(pathLength,cntrTraj,leftTraj,rghtTraj) => {
+      pathfinder.generateTank(points.length,points,projectSettings.timeStep,pathOptions.velocity,pathOptions.acceleration,pathOptions.jerk,(pathLength,cntrTraj,leftTraj,rghtTraj) => {
         //console.log(length);
         //console.log(cntrTraj[0]);
         //console.log(cntrTraj);
-        console.log(leftTraj[0]);
+        //console.log(leftTraj[0]);
         //console.log(rghtTraj);
 
         var exportArray = [];
@@ -535,4 +571,64 @@ ipc.on('menu-Export-Path', (event, message) => {
       });
     }
   })
+})
+
+ipc.on('menu-Export', (event, message) => {
+  dialog.showSaveDialog( {
+    "title": "Export",
+    "buttonLabel": "Export",
+    "filters": [
+      { name: "folder", extensions: ['']},
+    ],
+
+  },(folderDir) => {
+    if (folderDir == null) {
+      console.log('exit Export');
+    } else {
+      fs.mkdirSync(folderDir);
+      fs.readdirSync(currentProjectDir + 'Paths/').forEach(file => {
+        console.log(file);
+        fs.readFile(currentProjectDir + '/paths/' + file, (err, data) => {
+          if (err) throw err;
+          var pathJSONData = JSON.parse(data);
+          console.log(pathJSONData);
+          if (pathJSONData.options == undefined) {
+            pathJSONData.options = {
+              'velocity': 4.0,
+              'acceleration': 3.0,
+              'jerk': 5.0
+            }
+          }
+          console.log(pathJSONData.options.velocity);
+
+          pathfinder.generateTank(pathJSONData.Points.length,pathJSONData.Points,projectSettings.timeStep,pathJSONData.options.velocity,pathJSONData.options.acceleration,pathJSONData.options.jerk,(pathLength,cntrTraj,leftTraj,rghtTraj) => {
+
+            var exportArray = [];
+    
+            for (let i = 0; i < pathLength; i++) {
+              var currentStep = [];
+              currentStep[0] = leftTraj[i].distance;
+              currentStep[1] = leftTraj[i].velocity;
+              currentStep[2] = rghtTraj[i].distance;
+              currentStep[3] = rghtTraj[i].velocity;
+              exportArray[i] = currentStep
+            }
+            console.log(folderDir + '/' + pathJSONData.Name + ".csv");
+            fs.writeFile(folderDir + '/' + pathJSONData.Name + ".csv", Papa.unparse(exportArray, {quotes:false}),(err) => {
+              if (err) {throw err} else {
+                console.log('Saved File');
+              };
+            })
+    
+          }, (err) => {
+            console.log(err);
+          });
+        })
+      });
+    }
+  })
+})
+
+ipc.on('menu-Robot', (event, message) => {
+
 })

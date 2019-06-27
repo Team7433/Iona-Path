@@ -1,0 +1,28 @@
+{
+    "Name":"NewPath",
+    "Notes": "Bla Ba Bla",
+    "Sections": [
+        {
+            "points": [],
+            "options": {
+                "velocity": 4,
+                "acceleration": 3,
+                "Jerk": 5
+            },
+            "Notes": "This Is Section 1 Notes",
+            "Inverted": false,
+            "wheelSwith": false
+        },
+        {
+            "points": [],
+            "options": {
+                "velocity": 4,
+                "acceleration": 3,
+                "Jerk": 5
+            },
+            "Notes": "This Is Section 2 Notes",
+            "Inverted": true,
+            "wheelSwith": false
+        }
+    ]
+}

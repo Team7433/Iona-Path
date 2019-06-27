@@ -131,6 +131,14 @@
               <input type="number" ng-model="project.wheelBase" ng-blur="updateProjectSettings()">
             </div>
             <div class="setting">
+              <span class="setting-text">Time Step</span>
+              <input type="number" ng-model="project.timeStep" ng-blur="updateProjectSettings()">
+            </div>
+            <div class="setting">
+              <span class="setting-text">Eval</span>
+              <input type="text" ng-model="evalString" ng-blur="testThing()">
+            </div>
+            <div class="setting">
               <span class="setting-text">Robot Type</span>
               <select name="" id="">
                 <option value="tank">Tank</option>
@@ -141,6 +149,9 @@
       </div>
     </div>
     <div ng-show="projectSettingShow" ng-click="projectSettingShow = false" style="position: absolute; left: 0; top: 0; width: 100vw; height: 100vh; background-color: rgba(46, 46, 46, 0.39); z-index: 9;">
+
+    </div>
+    <div ng-show="loaded" style="position: absolute; left: 0; top: 0; width: 100vw; height: 100vh; z-index:20;">
 
     </div>
     <script src="./renderer.js"></script>
