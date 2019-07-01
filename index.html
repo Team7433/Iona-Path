@@ -37,24 +37,48 @@
           </div>
           <div id="sectionsListBox">
             <div id="sections-box-body">
-              Sections
+              <div class="section-header">
+                <h3>Sections</h3>
+                <img ng-click="newSection()" src="./assets/add-blue.svg" alt="">
+              </div>
+              
+              <div class="sections">
+                <div class="section" ng-repeat="section in Sections">
+                  <div ng-hide="sectionIsSelected($index)" ng-click="sectionSelect($index)" class="section-unselected"><span>Section {{$index + 1}}</span></div>
+                  <div ng-show="sectionIsSelected($index)" class="section-selected"><span>Section {{$index + 1}}</span><img class="icon" src="./assets/dropdown-solid.svg" ng-click="section.dropdown = !section.dropdown" alt=""></div>
+                  <div class="section-dropdown" ng-style="isSectionDropdownShown(section.dropdown, $index)" >
+                    <div ng-show="section.dropdown && sectionIsSelected($index)" style="transition-delay: 500ms; transition-property: display;">
+                      <div class="setting">
+                        <span class="setting-text">Inverted</span>
+                        <input type="checkbox" ng-model="section.inverted" ng-change="updateSectionSettings($index)">
+                      </div>
+                      <div class="setting">
+                        <span class="setting-text">switch Sides</span>
+                        <input type="checkbox" ng-model="section.switchSides" ng-change="updateSectionSettings($index)">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <div id="sectionsDrawHandle">
-
           </div>
 
         </div>
         <div class="content" id="content">
           <div class="TopPannels">
-            <div class="canvas-pannel">
-              <div style="position: relative; height: 500px; width: 1000px;">
-                <canvas id="fieldView" width="1000" height="500" 
+            <div class="canvas-pannel" ng-style="toolCursor()">
+              <div id="canvasSpacer" style="position: relative;">
+                <canvas id="fieldView"
                   style="position: absolute; left: 0; top: 0; z-index: 0; background: url('./images/DeepSpace.jpg'); background-size: cover;"></canvas>
-                <canvas id="pointsView" width="1000" height="500" ng-click="click()"
+                <canvas id="pointsView" ng-click="click()"
                   style="position: absolute; left: 0; top: 0; z-index: 1;"></canvas>
               </div>
-              <div class="pannel-body"></div>
+              <div class="pannel-body" style="padding-right: 0">
+                <div ng-style="isCurrentToolBk(0)" style="height: 15px; margin-bottom: 5px;"><img id="tool-Move" ng-click="setTool(0)" src="./assets/move-gray.svg" width="15" alt=""></div>
+                <div ng-style="isCurrentToolBk(1)" style="height: 15px; margin-bottom: 5px;"><img id="tool-Add" ng-click="setTool(1)" src="./assets/add-gray.svg" width="15" alt=""></div>
+              </div>
             </div>
             <div class="pannel">
               <div class="pannel-body">
@@ -74,7 +98,7 @@
               </div>
             </div>
           </div>
-          <div class="BottomPannels">
+          <div class="BottomPannels" id="BottomPannels">
             <div class="pannel">
               <div class="pannel-body">
                 <table>
@@ -110,7 +134,7 @@
             <div class="pannel">
               <div class="pannel-body VelocityPannel">
                 Velocity
-                <canvas id="velocityCanvas" style="  width: 100%; height: 300px;"></canvas>
+                <canvas id="velocityCanvas" ></canvas>
               </div>
             </div>
           </div> 
@@ -154,6 +178,6 @@
     <div ng-show="loaded" style="position: absolute; left: 0; top: 0; width: 100vw; height: 100vh; z-index:20;">
 
     </div>
-    <script src="./renderer.js"></script>
+    <script src="./js/renderer.js"></script>
   </body>
 </html>

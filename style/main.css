@@ -2,6 +2,7 @@ body {
   background-color: #E5E5E5;
   overflow: hidden;
   margin: 0;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .pannel {
@@ -138,6 +139,27 @@ body {
   z-index: 2;
   -webkit-transition: left 500ms;
   transition: left 500ms;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-rows: auto min-content;
+      grid-template-rows: auto -webkit-min-content;
+      grid-template-rows: auto min-content;
+}
+
+.sidebar #sectionsDrawHandle .bottomIcons {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: end;
+      -ms-flex-align: end;
+          align-items: flex-end;
+}
+
+.sidebar #sectionsDrawHandle img {
+  width: 19px;
+  margin: 3px;
+  color: white;
+  stroke: white;
 }
 
 .sidebar #pathsListBox {
@@ -172,7 +194,27 @@ body {
 
 .sidebar #sectionsListBox #sections-box-body {
   display: none;
-  padding: 5px;
+}
+
+.sidebar #sectionsListBox #sections-box-body h3 {
+  margin: 5px;
+}
+
+.sidebar #sectionsListBox .section-header {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: auto min-content;
+      grid-template-columns: auto -webkit-min-content;
+      grid-template-columns: auto min-content;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.sidebar #sectionsListBox .section-header img {
+  height: 21px;
+  margin: 5px;
+  color: #007DBE;
 }
 
 .VelocityPannel {
@@ -292,5 +334,38 @@ body {
 .modal-pannel .modal-close img {
   z-index: 10;
   height: 30px;
+}
+
+.section .section-unselected {
+  padding: 5px 0 5px 10px;
+  cursor: pointer;
+}
+
+.section .section-selected {
+  padding: 5px 0 5px 10px;
+  cursor: pointer;
+  background-color: #07547e;
+  color: white;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: auto min-content;
+      grid-template-columns: auto -webkit-min-content;
+      grid-template-columns: auto min-content;
+}
+
+.icon {
+  height: 14px;
+  margin: 2px 5px 0;
+}
+
+.section-dropdown {
+  margin-left: 10px;
+  margin-right: 10px;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  padding: 15px;
+  background-color: white;
+  -webkit-transition: height 500ms, padding 500ms;
+  transition: height 500ms, padding 500ms;
 }
 /*# sourceMappingURL=main.css.map */

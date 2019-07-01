@@ -20,6 +20,7 @@ function createWindow () {
     webPreferences: {
       nodeIntegration: true
     },
+    offscreen: true
   })
 
   // and load the index.html of the app.
@@ -35,6 +36,27 @@ function createWindow () {
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
     mainWindow = null
+    console.log('closed');
+  })
+
+  mainWindow.on('close', function () { 
+    mainWindow.webContents.send('closing');
+    console.log('closing');
+  })
+
+  mainWindow.on('resize', () => {
+    mainWindow.webContents.send('resize')
+  })
+
+  mainWindow.on('enter-full-screen', () => {
+    mainWindow.webContents.send('resize')
+  })
+
+  mainWindow.on('leave-full-screen', () => {
+    mainWindow.webContents.send('resize')
+  })
+  mainWindow.webContents.on('paint', (event, dirty, image) => {
+    updateBitmap(dirty, image.getBitmap())
   })
 }
 

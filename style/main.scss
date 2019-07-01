@@ -3,6 +3,7 @@ body {
     background-color: #E5E5E5;
     overflow: hidden;
     margin: 0;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .pannel {
@@ -94,6 +95,17 @@ body {
         left: 100px;
         z-index: 2;
         transition: left 500ms;
+        display: grid;
+        grid-template-rows: auto min-content;
+        .bottomIcons {
+            display: flex; align-items: flex-end;
+        }
+        img {
+            width: 19px;
+            margin: 3px;
+            color: white;
+            stroke: white;
+        }
     }
     #pathsListBox {
         width: 0;
@@ -120,7 +132,19 @@ body {
         transition: width 500ms, left 500ms;
         #sections-box-body {
             display: none;
-            padding: 5px;
+            h3 {
+                margin: 5px;
+            }
+        }
+        .section-header {
+            display: grid;
+            grid-template-columns: auto min-content;
+            align-items: center;
+            img {
+                height: 21px;
+                margin: 5px;
+                color: #007DBE;
+            }
         }
     }
 }
@@ -203,4 +227,34 @@ body {
             height: 30px;;
         }
     }
+}
+
+.section {
+    .section-unselected {
+        padding: 5px 0 5px 10px;
+        cursor: pointer;
+    }
+    .section-selected {
+        padding: 5px 0 5px 10px;
+        cursor: pointer;
+        background-color: #07547e;
+        color: white;
+        display: grid;
+        grid-template-columns: auto min-content;
+    }
+}
+
+.icon {
+    height: 14px;
+    margin: 2px 5px 0;
+}
+
+.section-dropdown {
+    margin-left: 10px;
+    margin-right: 10px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    padding: 15px;
+    background-color: white;
+    transition: height 500ms, padding 500ms;
 }
