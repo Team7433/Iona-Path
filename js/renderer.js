@@ -1,6 +1,7 @@
 
 const pathfinder = require('pathfinder1-jaci-js');
 const { dialog } = require('electron').remote;
+const { app } = require('electron').remote;
 const ipc = require('electron').ipcRenderer;
 const fs = require('fs');
 const Papa = require('papaparse');
@@ -32,7 +33,7 @@ userPath = ipc.sendSync('get-user-path');
 var settingsFile;
 
 try {
-  fileContents = fs.readFileSync(userPath + "/user/settings.json");
+  settingsFile = fs.readFileSync(userPath + "/user/settings.json");
 } catch (err) {
   console.log('No File Found');
   settingsFile = "{}";
@@ -40,7 +41,11 @@ try {
 
 var settingsData = JSON.parse(settingsFile);
 
-var currentProjectDir = './ExampleProject/'
+if (fs.existsSync(userPath + "/user/") != true) {
+  fs.mkdirSync(userPath + "/user/");
+} 
+
+var currentProjectDir = ''
 
 var pathsInDir = [];
 
@@ -52,35 +57,86 @@ var changeIndicator = document.getElementById('changeIndicator');
 
 var projectSettings;
 
-var currentPathData;
+var currentPathData = {
+  "Name":"Test",
+  "Sections": [
+    {
+      "points": [
+        [1,1,0], 
+        [2,1,0]
+      ],
+      "options": {
+        "velocity":5,
+        "acceleration":3,
+        "jerk":5
+      },
+      "inverted":false,
+      "switchSides":false
+    }
+  ]
+}
 
 var currentToolId = 0;
 
 var pathNotes = "";
 var sectionNotes = "";
 
-if (fs.existsSync(currentProjectDir + 'settings.json')) {
-  var projectSettingsFile = fs.readFileSync(currentProjectDir + 'settings.json');
+function OpenProject (newPath) {
+  if (fs.existsSync(newPath)) {
+    currentProjectDir = newPath;
+    console.log("Project Directory: " + currentProjectDir);
+  } else {
+    console.alert("Project Does Not Exisit")
+    return;
+  }
 
-  projectSettings = JSON.parse(projectSettingsFile);
-} else {
-  fs.writeFile(currentProjectDir + 'settings.json', JSON.stringify({ 'teamnumber': null, 'wheelBase': 0.7, 'timeStep': 0.02}), (err) => {
-    if (err) throw err;
-  })
+  //Checks if we have a settings file in project then collects data from it (We don't really need to check because when you open a directory that has no settings file it allready has created)
+  if (fs.existsSync(currentProjectDir + 'settings.json')) {
+    var projectSettingsFile = fs.readFileSync(currentProjectDir + 'settings.json');
+    projectSettings = JSON.parse(projectSettingsFile);
+  }
+  console.log(projectSettings);
+
+  pathsInDir = [];
+  
+  //check through directory of paths for paths then adds it to a array
+  fs.readdirSync(currentProjectDir + 'paths/').forEach(file => {
+      if (file.indexOf('.json') != -1) {
+        var pathContense = fs.readFileSync(currentProjectDir + 'paths/' + file);
+        var pathData = JSON.parse(pathContense);
+        pathsInDir.push({
+            "fileName": file,
+            "name": pathData.Name,
+            'enter': true
+        });
+      }
+  });
+
+  console.log(pathsInDir);
+
+  if (pathsInDir.length > 0) {
+    openPath(pathsInDir[0]);
+    pathsInDir[0].selected = true;
+    currentPath = pathsInDir[0];
+  } else {
+    openPath(null);
+  }
 }
-console.log(projectSettings);
 
-fs.readdirSync(currentProjectDir + 'Paths/').forEach(file => {
-    if (file.indexOf('.json') != -1) {
-      var pathContence = fs.readFileSync(currentProjectDir + 'Paths/' + file);
-      var pathData = JSON.parse(pathContence);
-      pathsInDir.push({
-          "fileName": file,
-          "name": pathData.Name,
-          'enter': true
-      });
-    }
-});
+
+//Open A Project
+if (settingsData.recents == undefined) {
+  settingsData.recents = [];
+  chooseProject();
+} else {
+  OpenProject(settingsData.recents[0].directory); 
+  (function () { 
+    console.log("Load");
+    UpdatePath();
+    SetPoints();
+    document.getElementById('MagicUpdater').click();
+   })
+}
 
 console.log(pathsInDir);
 
@@ -90,7 +146,7 @@ function openPath(path) {
     var newProject = false;
     var currentPathFile;
     try {
-      currentPathFile = fs.readFileSync(currentProjectDir + 'Paths/' + path.fileName);
+      currentPathFile = fs.readFileSync(currentProjectDir + 'paths/' + path.fileName);
     } catch (err) {
       console.log('No Paths In Project' + err)
       newProject = true;
@@ -99,7 +155,9 @@ function openPath(path) {
       currentPathData = JSON.parse(currentPathFile);
       setSection(0);
       SetChanges(false);
-    } 
+    } else {
+
+    }
   } else {
     currentPathData = { 
       'Sections': [
@@ -115,20 +173,13 @@ function openPath(path) {
       'Name': null 
     }
     setSection(0);
+    SetChanges(false);
   }
 }
 
 function setSection(index) {
   currentSectionIndex = index;
 };
-
-if (pathsInDir.length > 0) {
-  openPath(pathsInDir[0]);
-  pathsInDir[0].selected = true;
-  currentPath = pathsInDir[0];
-} else {
-  openPath(null);
-}
 
 /**
  * Sets Changes status indicator
@@ -322,8 +373,6 @@ angularApp.directive('focusOn', function() {
 var firstAdd = document.getElementById('firstAdd');
 
 angularApp.controller("myCtrl", function($scope) {
-  UpdatePath();
-  SetPoints();
   $scope.points = currentPathData.Sections[currentSectionIndex].points;
   $scope.paths = pathsInDir;
   $scope.project = projectSettings;
@@ -485,8 +534,14 @@ angularApp.controller("myCtrl", function($scope) {
       path.name = 'untitled'
     }
     if (path.fileName != null) {
-      fs.rename(currentProjectDir + 'Paths/' + path.fileName, currentProjectDir + 'Paths/' + path.name + '.json', (err) => {
+      fs.rename(currentProjectDir + 'paths/' + path.fileName, currentProjectDir + 'paths/' + path.name + '.json', (err) => {
         if (err) throw err;
+        var renamedFile = JSON.parse(fs.readFileSync(currentProjectDir + 'paths/' + path.name + '.json'));
+        renamedFile.Name = path.name;
+        fs.writeFile(currentProjectDir + 'paths/' + path.name + '.json', JSON.stringify(renamedFile),(err) => {
+          if (err) throw err;
+        })
+
         for (let i = 0; i < pathsInDir.length; i++) {
           if (path.fileName == pathsInDir[i].fileName) {
             pathsInDir[i].fileName = path.name + '.json';
@@ -498,7 +553,7 @@ angularApp.controller("myCtrl", function($scope) {
     } else {
       var fileData = JSON.stringify({'Sections': [ { 'points': [], 'options': { 'velocity': 4.0, 'acceleration': 3.0, 'jerk': 5.0 }}], 'Name':path.name})
 
-      fs.writeFileSync(currentProjectDir + 'Paths/' + path.name + '.json', fileData);
+      fs.writeFileSync(currentProjectDir + 'paths/' + path.name + '.json', fileData);
       for (let i = 0; i < pathsInDir.length; i++) {
         if (path.fileName == pathsInDir[i].fileName) {
           pathsInDir[i].fileName = path.name + '.json';
@@ -622,7 +677,15 @@ angularApp.controller("myCtrl", function($scope) {
       }
     }
   }
-
+  $scope.updateEverything = () => {
+    console.log("updateEverything");
+    $scope.points = currentPathData.Sections[currentSectionIndex].points;
+    $scope.paths = pathsInDir;
+    $scope.project = projectSettings;
+    $scope.options = currentPathData.Sections[currentSectionIndex].options;
+    $scope.loaded = true;
+    $scope.Sections = currentPathData.Sections;
+  }
 });
 
 ipc.on('menu-Save', (event, message) => {
@@ -646,7 +709,7 @@ ipc.on('menu-Save', (event, message) => {
   
   var fileContent = JSON.stringify(pathJson);
 
-  fs.writeFile(currentProjectDir + 'Paths/' + currentPath.fileName, fileContent, 'utf8', (err) => {
+  fs.writeFile(currentProjectDir + 'paths/' + currentPath.fileName, fileContent, 'utf8', (err) => {
       if (err) {
           console.log("An error occured while saving path to File.");
           return console.log(err);
@@ -745,9 +808,9 @@ ipc.on('menu-Export', (event, message) => {
       console.log('exit Export');
     } else {
       fs.mkdirSync(folderDir);
-      fs.readdirSync(currentProjectDir + 'Paths/').forEach(file => {
+      fs.readdirSync(currentProjectDir + 'paths/').forEach(file => {
         console.log(file);
-        fs.readFile(currentProjectDir + '/paths/' + file, (err, data) => {
+        fs.readFile(currentProjectDir + 'paths/' + file, (err, data) => {
           if (err) throw err;
           var pathJSONData = JSON.parse(data);
           console.log(pathJSONData);
@@ -806,12 +869,10 @@ function updateResponsive () {
   pntCanvas.width = (canvasHeight * 2);
   canvas.width = (canvasHeight * 2);
 
-  mToCanvasScaler = canvas.height/fieldWidth
-  console.log(screenHeight);
+  mToCanvasScaler = canvas.height/fieldWidth;
 
   var bottomCanvasHeight = screenHeight - canvasHeight - (3 * 20) - 10 - 38 - 18;
   document.getElementById('velocityCanvas').height = bottomCanvasHeight;
-  console.log(screenWidth);
   document.getElementById('velocityCanvas').width = screenWidth - 125 - 20 - 487 - 60;
 }
 updateResponsive();
@@ -819,3 +880,57 @@ updateResponsive();
 ipc.on('resize', (event, message) => {
   updateResponsive();
 })
+
+ipc.on('menu-open-project', (event, message) => {
+  console.log("Open Project");
+  chooseProject();
+})
+
+async function chooseProject() {
+  await dialog.showOpenDialog({
+    'title': "Open Project",
+    'buttonLabel': "Open",
+    'properties': [
+      'openDirectory',
+      'createDirectory',
+
+    ],
+  }, (newprojectDir) => {
+    console.log("Dialog Done");
+    if (newprojectDir != null) {
+      console.log(newprojectDir);
+      var newProject = false;
+      try {
+        fs.openSync(newprojectDir + "/settings.json");
+      } catch (error) {
+        newProject = true;
+      }
+      if (newProject) {
+        var defaultProjectSettingsJson = {
+          "teamnumber":9999,
+          "timeStep":0.02
+        }
+        fs.writeFileSync(newprojectDir + "/settings.json", JSON.stringify(defaultProjectSettingsJson));
+        fs.mkdirSync(newprojectDir + "/paths/");
+        fs.writeFileSync(newprojectDir + "/paths/untitled.json", JSON.stringify({"Name":"untitled","Sections":[{"points":[],"options":{"velocity":5,"acceleration":3,"jerk":5},"inverted":false,"switchSides":false}]}))
+      }
+      OpenProject(newprojectDir + "/");
+      document.getElementById('MagicUpdater').click();
+      UpdatePath();
+      SetPoints();
+      settingsData.recents.forEach((project, index) => {
+        if (project.directory == newprojectDir + "/") {
+          settingsData.recents.splice(index, 1);
+        }
+      });
+      var name = String(newprojectDir).replace(app.getPath('home'), "~");
+      settingsData.recents.unshift({
+        'directory': newprojectDir + "/",
+        'name': name,
+        'accessTime': Date.now()
+      })
+      fs.writeFileSync(userPath + "/user/settings.json", JSON.stringify(settingsData))
+    }
+  })
+  console.log("In Function Below Dialog");
+}

@@ -110,12 +110,32 @@ const template = [
         accelerator: 'CmdOrCtrl+N'
       },
       {
-        label:'New Project',
+        label:'New Window',
         click() {
-          mainWindow.webContents.send('menu-new-project');
-          console.log('new Project');
+          mainWindow.webContents.send('menu-new-window');
+          console.log('new window');
         },
         accelerator: 'CmdOrCtrl+Shift+N'
+      },
+      {type:'separator'},
+      {
+        label:'Open Project',
+        click() {
+          mainWindow.webContents.send('menu-open-project');
+          console.log('new window');
+        },
+        accelerator: 'CmdOrCtrl+O'
+      },
+      {
+        label:'Open Recent',
+        id: 'recent',
+        type: 'submenu',
+        submenu: [
+          { label: "No Recent Files"},
+          { type: 'separator'},
+          { label: "Clear Recent Files",},
+        ],
+        accelerator: 'CmdOrCtrl+O'
       },
       {type:'separator'},
       {
