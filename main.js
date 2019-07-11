@@ -4,6 +4,7 @@
 const {app, BrowserWindow, Menu} = require('electron')
 const ipcMain = require('electron').ipcMain
 var path = require('path')
+const fs = require('fs')
 
 require('electron-reload')(__dirname, {ignored: /ExampleProject|[\/\\]\./});
 
@@ -16,7 +17,7 @@ function createWindow () {
   //mainWindow = new BrowserWindow({width: 800, height: 600});
   mainWindow = new BrowserWindow({
     width: 1200,
-    height: 800,
+    height: 700,
     webPreferences: {
       nodeIntegration: true
     },
@@ -227,9 +228,50 @@ const template = [
   }
 ]
 
+function UpdateRecents() { 
+  var userDataPath = app.getPath('userData') + "/user/";
+  if (fs.existsSync(userDataPath + "settings.json")) {
+    fs.readFile(userDataPath + "settings.json", (err, data) => {
+      if (err) console.log(err);
+
+      var settingsData = JSON.parse(data);
+
+      var recentsMenu = [];
+
+      //add each recent project to the menu
+      settingsData.recents.forEach(project => {
+        recentsMenu.push({
+          label: project.name,
+          click() {
+            mainWindow.webContents.send("open-recent", project.directory);
+            console.log("open Recent " + project.name);
+          }
+        })
+      }); 
+
+      //added other stuff
+      recentsMenu.push({ type: 'separator' })
+      recentsMenu.push({ label: "Clear Recent Files"})
+      
+      //put that into the template
+      template[1].submenu[4].submenu = recentsMenu;
+
+      //update Template
+      const menu = Menu.buildFromTemplate(template);
+      Menu.setApplicationMenu(menu);
+    })
+  }
+}
+
 const menu = Menu.buildFromTemplate(template);
 Menu.setApplicationMenu(menu);
 
+UpdateRecents();
+
 ipcMain.on('get-user-path', (event, arg) => {
   event.returnValue = app.getPath('userData');
+})
+
+ipcMain.on('update-recents', (event) => {
+  UpdateRecents();
 })

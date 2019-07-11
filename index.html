@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="./style/main.css">
   </head>
   <body ng-app="myApp" ng-controller="myCtrl" scroll="none">
-    <div class="contentArea" >
+    <div class="contentArea" id="contentArea" ng-show="loaded">
         <div class="sidebar">
           <div id="menuBar">
             <div class="topIcons">
@@ -173,9 +173,6 @@
       </div>
     </div>
     <div ng-show="projectSettingShow" ng-click="projectSettingShow = false" style="position: absolute; left: 0; top: 0; width: 100vw; height: 100vh; background-color: rgba(46, 46, 46, 0.39); z-index: 9;">
-
-    </div>
-    <div ng-show="loaded" style="position: absolute; left: 0; top: 0; width: 100vw; height: 100vh; z-index:20;">
 
     </div>
     <div id="MagicUpdater" ng-click="updateEverything()"></div>

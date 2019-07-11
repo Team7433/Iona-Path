@@ -16,6 +16,9 @@ var ctx = canvas.getContext("2d");
 var pntCanvas = document.getElementById("pointsView");
 var pntCtx = pntCanvas.getContext("2d");
 
+var velcoityCanvas = document.getElementById("velocityCanvas");
+var velCtx = canvas.getContext("2d");
+
 var fieldWidth = 8.23; //meters
 var mToCanvasScaler = canvas.height/fieldWidth;
 
@@ -130,12 +133,13 @@ if (settingsData.recents == undefined) {
   chooseProject();
 } else {
   OpenProject(settingsData.recents[0].directory); 
-  (function () { 
+  window.addEventListener('load', function () { 
     console.log("Load");
     UpdatePath();
     SetPoints();
     document.getElementById('MagicUpdater').click();
-   })
+
+  }, false)
 }
 
 console.log(pathsInDir);
@@ -310,7 +314,9 @@ function pointHandle(color, x, y) {
 function UpdatePath() {
     if (currentPathData.Sections[currentSectionIndex].points.length > 1) {
         pathfinder.generateTank(currentPathData.Sections[currentSectionIndex].points.length,currentPathData.Sections[currentSectionIndex].points,projectSettings.timeStep,currentPathData.Sections[currentSectionIndex].options.velocity,currentPathData.Sections[currentSectionIndex].options.acceleration,currentPathData.Sections[currentSectionIndex].options.jerk,(length,cntrTraj,leftTraj,rghtTraj) => {
-            console.log(length);
+            console.log("Generated At: " + length + "Points");
+            
+            //2D Path Viewer
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.beginPath();
             ctx.moveTo(cntrTraj[0].x*mToCanvasScaler, cntrTraj[0].y*mToCanvasScaler);
@@ -320,6 +326,9 @@ function UpdatePath() {
             ctx.lineWidth = 5;
             ctx.strokeStyle = "#00A8FF";
             ctx.stroke();
+
+            //Velocity Graph
+
         }, (err) => {
             document.getElementsByClassName('canvas-pannel')[0].classList.add('canvas-pannel-error');
             document.getElementsByClassName('canvas-pannel')[0].classList.remove('canvas-pannel-error-remove');
@@ -930,7 +939,16 @@ async function chooseProject() {
         'accessTime': Date.now()
       })
       fs.writeFileSync(userPath + "/user/settings.json", JSON.stringify(settingsData))
+      ipc.send('update-recents');
     }
   })
   console.log("In Function Below Dialog");
 }
+
+ipc.on('open-recent', (event, directory) => {
+  console.log("Open " + directory);
+  OpenProject(directory); 
+  UpdatePath();
+  SetPoints();
+  document.getElementById('MagicUpdater').click();
+})
