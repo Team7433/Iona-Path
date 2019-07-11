@@ -17,7 +17,7 @@ var pntCanvas = document.getElementById("pointsView");
 var pntCtx = pntCanvas.getContext("2d");
 
 var velcoityCanvas = document.getElementById("velocityCanvas");
-var velCtx = canvas.getContext("2d");
+var velCtx = velcoityCanvas.getContext("2d");
 
 var fieldWidth = 8.23; //meters
 var mToCanvasScaler = canvas.height/fieldWidth;
@@ -328,6 +328,70 @@ function UpdatePath() {
             ctx.stroke();
 
             //Velocity Graph
+            var TopVelocityShown = Math.ceil(currentPathData.Sections[currentSectionIndex].options.velocity);
+            var GraphHeight = velcoityCanvas.height-31;
+            var GraphWidth = velcoityCanvas.width-30;
+            var PathTimeLength = length*projectSettings.timeStep;
+            
+            velCtx.clearRect(0, 0, velcoityCanvas.width, velcoityCanvas.height);
+
+            //add left path line
+            velCtx.beginPath();
+            velCtx.moveTo(30, GraphHeight);
+            for (let i = 0; i < cntrTraj.length; i++) {
+              velCtx.lineTo(30+(projectSettings.timeStep*i*((GraphWidth - 30)/(Math.ceil(PathTimeLength)))), GraphHeight-(leftTraj[i].velocity*(GraphHeight - 20)/TopVelocityShown));
+              //console.log(GraphHeight-(leftTraj[i].velocity*(GraphHeight - 20)/TopVelocityShown));
+            }
+            velCtx.lineWidth = 2;
+            velCtx.strokeStyle = "#00A8FF";
+            velCtx.stroke();
+
+
+            //add Right path line
+            velCtx.beginPath();
+            velCtx.moveTo(30, GraphHeight);
+            for (let i = 0; i < cntrTraj.length; i++) {
+              velCtx.lineTo(30+(projectSettings.timeStep*i*((GraphWidth - 30)/(Math.ceil(PathTimeLength)))), GraphHeight-(rghtTraj[i].velocity*(GraphHeight - 20)/TopVelocityShown));
+              //console.log(GraphHeight-(leftTraj[i].velocity*(GraphHeight - 20)/TopVelocityShown));
+            }
+            velCtx.lineWidth = 2;
+            velCtx.strokeStyle = "#e6d137";
+            velCtx.stroke();
+
+
+            velCtx.strokeStyle = "black";
+            velCtx.strokeRect(30, -1, velcoityCanvas.width-(28), velcoityCanvas.height-(30));
+            velCtx.beginPath();
+            if (TopVelocityShown < 7) {
+              for (let b = 0; b < TopVelocityShown; b++) {
+                velCtx.moveTo(20,20 + ((GraphHeight - 20)/TopVelocityShown)*b);
+                velCtx.lineTo(30,20 + ((GraphHeight - 20)/TopVelocityShown)*b);
+                
+              }
+              velCtx.stroke();
+              velCtx.font = "15px Verdana";
+              for (let b = 0; b < TopVelocityShown; b++) {
+                velCtx.fillText(String(TopVelocityShown-b), 8, 25 + ((GraphHeight - 20)/TopVelocityShown)*b);
+                
+              }
+              
+            }
+
+            velCtx.beginPath();
+            for (let b = 0; b < (Math.ceil(PathTimeLength)*2); b++) {
+              velCtx.moveTo(30 + (GraphWidth - 30)/(Math.ceil(PathTimeLength)*2) + ((GraphWidth - 30)/(Math.ceil(PathTimeLength)*2))*b, GraphHeight);
+              velCtx.lineTo(30 + (GraphWidth - 30)/(Math.ceil(PathTimeLength)*2) + ((GraphWidth - 30)/(Math.ceil(PathTimeLength)*2))*b, GraphHeight+10);
+              
+            }
+            velCtx.stroke();
+
+            for (let b = 0; b < (Math.ceil(PathTimeLength)*2); b++) {
+              var textWidth = ctx.measureText(String(0.5*(b+1))).width;
+              velCtx.fillText(String(0.5*(b+1)), 30 + (GraphWidth - 30)/(Math.ceil(PathTimeLength)*2) - textWidth + 1 + ((GraphWidth - 30)/(Math.ceil(PathTimeLength)*2))*b, GraphHeight + 24);
+              
+            }
+            console.log(leftTraj[100]);
+            
 
         }, (err) => {
             document.getElementsByClassName('canvas-pannel')[0].classList.add('canvas-pannel-error');
