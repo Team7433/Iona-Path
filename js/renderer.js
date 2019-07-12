@@ -60,6 +60,8 @@ var changeIndicator = document.getElementById('changeIndicator');
 
 var projectSettings;
 
+var pathShow = " Left Right"
+
 var currentPathData = {
   "Name":"Test",
   "Sections": [
@@ -134,7 +136,6 @@ if (settingsData.recents == undefined) {
 } else {
   OpenProject(settingsData.recents[0].directory); 
   window.addEventListener('load', function () { 
-    console.log("Load");
     UpdatePath();
     SetPoints();
     document.getElementById('MagicUpdater').click();
@@ -142,10 +143,7 @@ if (settingsData.recents == undefined) {
   }, false)
 }
 
-console.log(pathsInDir);
-
 function openPath(path) {
-  console.log(path)
   if (path != null) {
     var newProject = false;
     var currentPathFile;
@@ -314,18 +312,50 @@ function pointHandle(color, x, y) {
 function UpdatePath() {
     if (currentPathData.Sections[currentSectionIndex].points.length > 1) {
         pathfinder.generateTank(currentPathData.Sections[currentSectionIndex].points.length,currentPathData.Sections[currentSectionIndex].points,projectSettings.timeStep,currentPathData.Sections[currentSectionIndex].options.velocity,currentPathData.Sections[currentSectionIndex].options.acceleration,currentPathData.Sections[currentSectionIndex].options.jerk,(length,cntrTraj,leftTraj,rghtTraj) => {
-            console.log("Generated At: " + length + "Points");
+            console.log("Generated At: " + length );
             
             //2D Path Viewer
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.beginPath();
-            ctx.moveTo(cntrTraj[0].x*mToCanvasScaler, cntrTraj[0].y*mToCanvasScaler);
-            for (let i = 0; i < cntrTraj.length; i++) {
-                ctx.lineTo(cntrTraj[i].x*mToCanvasScaler, cntrTraj[i].y*mToCanvasScaler);
-            }
-            ctx.lineWidth = 5;
-            ctx.strokeStyle = "#00A8FF";
-            ctx.stroke();
+            if (pathShow.search("Left") != -1) {
+
+              ctx.beginPath();
+              ctx.moveTo(leftTraj[0].x*mToCanvasScaler, leftTraj[0].y*mToCanvasScaler);
+              for (let i = 0; i < leftTraj.length; i++) {
+                  ctx.lineTo(leftTraj[i].x*mToCanvasScaler, leftTraj[i].y*mToCanvasScaler);
+              }
+              ctx.lineWidth = 4;
+              ctx.strokeStyle = "#00A8FF";
+              ctx.stroke();
+            }  
+            
+            if (pathShow.search("Right") != -1) {
+              //if we are showing left
+
+              ctx.beginPath();
+              ctx.moveTo(rghtTraj[0].x*mToCanvasScaler, rghtTraj[0].y*mToCanvasScaler);
+              for (let i = 0; i < leftTraj.length; i++) {
+                  ctx.lineTo(rghtTraj[i].x*mToCanvasScaler, rghtTraj[i].y*mToCanvasScaler);
+              }
+              ctx.lineWidth = 4;
+              ctx.strokeStyle = "#e6d137";
+              ctx.stroke();
+
+            } 
+
+            if (pathShow.search("Center") != -1) {
+              //if we are showing center
+
+              ctx.beginPath();
+              ctx.moveTo(cntrTraj[0].x*mToCanvasScaler, cntrTraj[0].y*mToCanvasScaler);
+              for (let i = 0; i < cntrTraj.length; i++) {
+                  ctx.lineTo(cntrTraj[i].x*mToCanvasScaler, cntrTraj[i].y*mToCanvasScaler);
+              }
+              ctx.lineWidth = 5;
+              ctx.strokeStyle = "#00A8FF";
+              ctx.stroke();
+
+            } 
+            
 
             //Velocity Graph
             var TopVelocityShown = Math.ceil(currentPathData.Sections[currentSectionIndex].options.velocity);
@@ -390,7 +420,8 @@ function UpdatePath() {
               velCtx.fillText(String(0.5*(b+1)), 30 + (GraphWidth - 30)/(Math.ceil(PathTimeLength)*2) - textWidth + 1 + ((GraphWidth - 30)/(Math.ceil(PathTimeLength)*2))*b, GraphHeight + 24);
               
             }
-            console.log(leftTraj[100]);
+
+            
             
 
         }, (err) => {
@@ -794,28 +825,28 @@ ipc.on('menu-Save', (event, message) => {
 });
 
 ipc.on('menu-Export-Path', (event, message) => {
-  dialog.showSaveDialog( {
+  dialog.showSaveDialog({
     "title": "Export",
     "buttonLabel": "Export",
     "filters": [
-      { name: "path", extensions: ['csv']},
+      { name: "path", extensions: ['csv'] },
     ],
     "defaultPath": currentPath.name
 
-  },(filename) => {
+  }, (filename) => {
     if (filename == null) {
       console.log('exit Export');
     } else {
       var exportArray = [];
       var finishedIndex = 0;
       for (let i = 0; i < currentPathData.Sections.length; i++) {
-        pathfinder.generateTank(currentPathData.Sections[i].points.length,currentPathData.Sections[i].points,projectSettings.timeStep,currentPathData.Sections[i].options.velocity,currentPathData.Sections[i].options.acceleration,currentPathData.Sections[i].options.jerk,(pathLength,cntrTraj,leftTraj,rghtTraj) => {
+        pathfinder.generateTank(currentPathData.Sections[i].points.length, currentPathData.Sections[i].points, projectSettings.timeStep, currentPathData.Sections[i].options.velocity, currentPathData.Sections[i].options.acceleration, currentPathData.Sections[i].options.jerk, (pathLength, cntrTraj, leftTraj, rghtTraj) => {
           while (i != finishedIndex) {
-            
+
           }
           var lastpoint = exportArray[exportArray.length - 1];
           if (lastpoint == undefined) {
-            lastpoint = [0,0,0,0];
+            lastpoint = [0, 0, 0, 0];
           }
           for (let b = 0; b < pathLength; b++) {
             var currentStep = [];
@@ -846,20 +877,20 @@ ipc.on('menu-Export-Path', (event, message) => {
             }
             exportArray.push(currentStep);
           }
-  
+
           console.log(exportArray);
 
           finishedIndex++;
 
           if (i == currentPathData.Sections.length - 1) {
-            fs.writeFile(filename, Papa.unparse(exportArray, {quotes:false}), (err) => {
+            fs.writeFile(filename, Papa.unparse(exportArray, { quotes: false }), (err) => {
               if (err) {
-                  console.log("An error occured while export path to File.");
-                  return console.log(err);
+                console.log("An error occured while export path to File.");
+                return console.log(err);
               }
             })
           }
-  
+
         }, (err) => {
           console.log(err);
         });
@@ -869,55 +900,82 @@ ipc.on('menu-Export-Path', (event, message) => {
 })
 
 ipc.on('menu-Export', (event, message) => {
-  dialog.showSaveDialog( {
+  dialog.showSaveDialog({
     "title": "Export",
     "buttonLabel": "Export",
     "filters": [
-      { name: "folder", extensions: ['']},
+      { name: "folder", extensions: [''] },
     ],
 
-  },(folderDir) => {
+  }, (folderDir) => {
     if (folderDir == null) {
       console.log('exit Export');
     } else {
       fs.mkdirSync(folderDir);
       fs.readdirSync(currentProjectDir + 'paths/').forEach(file => {
-        console.log(file);
+        console.log("Export: " + file);
         fs.readFile(currentProjectDir + 'paths/' + file, (err, data) => {
           if (err) throw err;
           var pathJSONData = JSON.parse(data);
           console.log(pathJSONData);
-          if (pathJSONData.options == undefined) {
-            pathJSONData.options = {
-              'velocity': 4.0,
-              'acceleration': 3.0,
-              'jerk': 5.0
-            }
+          var exportArray = [];
+          var finishedIndex = 0;
+
+          for (let i = 0; i < currentPathData.Sections.length; i++) {
+            pathfinder.generateTank(pathJSONData.Sections[i].points.length, pathJSONData.Sections[i].points, projectSettings.timeStep, pathJSONData.Sections[i].options.velocity, pathJSONData.Sections[i].options.acceleration, pathJSONData.Sections[i].options.jerk, (pathLength, cntrTraj, leftTraj, rghtTraj) => {
+              while (i != finishedIndex) {
+
+              }
+              var lastpoint = exportArray[exportArray.length - 1];
+              if (lastpoint == undefined) {
+                lastpoint = [0, 0, 0, 0];
+              }
+              for (let b = 0; b < pathLength; b++) {
+                var currentStep = [];
+                if (currentPathData.Sections[i].inverted == true) {
+                  if (currentPathData.Sections[i].switchSides == true) {
+                    currentStep[2] = lastpoint[0] - leftTraj[b].distance;
+                    currentStep[3] = -leftTraj[b].velocity;
+                    currentStep[0] = lastpoint[0] - rghtTraj[b].distance;
+                    currentStep[1] = -rghtTraj[b].velocity;
+                  } else {
+                    currentStep[0] = lastpoint[0] - leftTraj[b].distance;
+                    currentStep[1] = -leftTraj[b].velocity;
+                    currentStep[2] = lastpoint[0] - rghtTraj[b].distance;
+                    currentStep[3] = -rghtTraj[b].velocity;
+                  }
+                } else {
+                  if (currentPathData.Sections[i].switchSides == true) {
+                    currentStep[2] = lastpoint[0] + leftTraj[b].distance;
+                    currentStep[3] = leftTraj[b].velocity;
+                    currentStep[0] = lastpoint[2] + rghtTraj[b].distance;
+                    currentStep[1] = rghtTraj[b].velocity;
+                  } else {
+                    currentStep[0] = lastpoint[0] + leftTraj[b].distance;
+                    currentStep[1] = leftTraj[b].velocity;
+                    currentStep[2] = lastpoint[2] + rghtTraj[b].distance;
+                    currentStep[3] = rghtTraj[b].velocity;
+                  }
+                }
+                exportArray.push(currentStep);
+              }
+
+
+              finishedIndex++;
+
+              if (i == currentPathData.Sections.length - 1) {
+                fs.writeFile(folderDir + '/' + pathJSONData.Name + ".csv", Papa.unparse(exportArray, { quotes: false }), (err) => {
+                  if (err) {
+                    console.log("An error occured while export path to File.");
+                    return console.log(err);
+                  }
+                })
+              }
+
+            }, (err) => {
+              console.log(err);
+            });
           }
-          console.log(pathJSONData.options.velocity);
-
-          pathfinder.generateTank(pathJSONData.Points.length,pathJSONData.Points,projectSettings.timeStep,pathJSONData.options.velocity,pathJSONData.options.acceleration,pathJSONData.options.jerk,(pathLength,cntrTraj,leftTraj,rghtTraj) => {
-
-            var exportArray = [];
-    
-            for (let i = 0; i < pathLength; i++) {
-              var currentStep = [];
-              currentStep[0] = leftTraj[i].distance;
-              currentStep[1] = leftTraj[i].velocity;
-              currentStep[2] = rghtTraj[i].distance;
-              currentStep[3] = rghtTraj[i].velocity;
-              exportArray[i] = currentStep
-            }
-            console.log(folderDir + '/' + pathJSONData.Name + ".csv");
-            fs.writeFile(folderDir + '/' + pathJSONData.Name + ".csv", Papa.unparse(exportArray, {quotes:false}),(err) => {
-              if (err) {throw err} else {
-                console.log('Saved File');
-              };
-            })
-    
-          }, (err) => {
-            console.log(err);
-          });
         })
       });
     }
