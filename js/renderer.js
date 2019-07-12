@@ -284,7 +284,7 @@ function PointsClear() {
 var pointHandles = [];
 function SetPoints() {
     PointsClear();
-    
+    pointHandles = [];
     for (let i = 0; i < currentPathData.Sections[currentSectionIndex].points.length; i++) {
         const element = currentPathData.Sections[currentSectionIndex].points[i];
         pointHandles[i] = new pointHandle("rgb(38,34,96)", element[0], element[1]);
@@ -324,7 +324,7 @@ function UpdatePath() {
                   ctx.lineTo(leftTraj[i].x*mToCanvasScaler, leftTraj[i].y*mToCanvasScaler);
               }
               ctx.lineWidth = 4;
-              ctx.strokeStyle = "#00A8FF";
+              ctx.strokeStyle = "#ff0077";
               ctx.stroke();
             }  
             
@@ -373,7 +373,7 @@ function UpdatePath() {
               //console.log(GraphHeight-(leftTraj[i].velocity*(GraphHeight - 20)/TopVelocityShown));
             }
             velCtx.lineWidth = 2;
-            velCtx.strokeStyle = "#00A8FF";
+            velCtx.strokeStyle = "#ff0077";
             velCtx.stroke();
 
 
@@ -421,7 +421,7 @@ function UpdatePath() {
               
             }
 
-            
+
             
 
         }, (err) => {
@@ -757,6 +757,7 @@ angularApp.controller("myCtrl", function($scope) {
     SetChanges(true);
     $scope.points = currentPathData.Sections[currentSectionIndex].points;
     $scope.options = currentPathData.Sections[currentSectionIndex].options;
+    $scope.updateEverything();
   }
   $scope.updateSectionSettings = (index) => {
     currentPathData.Sections[index].inverted = $scope.Sections[index].inverted;
