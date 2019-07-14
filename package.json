@@ -10,16 +10,16 @@
   "author": "GitHub",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "^5.0.2",
+    "electron": "^5.0.6",
     "electron-rebuild": "^1.8.5"
   },
   "dependencies": {
     "angular": "^1.7.8",
     "electron-reload": "^1.4.0",
-    "node-abi": "^2.8.0",
+    "node-abi": "^2.9.0",
     "node-ftp": "^0.3.10",
     "papaparse": "^5.0.0",
-    "pathfinder1-jaci-js": "^1.0.15",
-    "sortablejs": "^1.10.0-rc2"
+    "pathfinder1-jaci-js": "^1.0.16",
+    "sortablejs": "^1.10.0-rc3"
   }
 }

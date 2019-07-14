@@ -311,7 +311,7 @@ function pointHandle(color, x, y) {
 
 function UpdatePath() {
     if (currentPathData.Sections[currentSectionIndex].points.length > 1) {
-        pathfinder.generateTank(currentPathData.Sections[currentSectionIndex].points.length,currentPathData.Sections[currentSectionIndex].points,projectSettings.timeStep,currentPathData.Sections[currentSectionIndex].options.velocity,currentPathData.Sections[currentSectionIndex].options.acceleration,currentPathData.Sections[currentSectionIndex].options.jerk,(length,cntrTraj,leftTraj,rghtTraj) => {
+        pathfinder.generateTank(currentPathData.Sections[currentSectionIndex].points.length,currentPathData.Sections[currentSectionIndex].points,projectSettings.timeStep,currentPathData.Sections[currentSectionIndex].options.velocity,currentPathData.Sections[currentSectionIndex].options.acceleration,currentPathData.Sections[currentSectionIndex].options.jerk,projectSettings.wheelBase, (length,cntrTraj,leftTraj,rghtTraj) => {
             console.log("Generated At: " + length );
             
             //2D Path Viewer
@@ -841,7 +841,7 @@ ipc.on('menu-Export-Path', (event, message) => {
       var exportArray = [];
       var finishedIndex = 0;
       for (let i = 0; i < currentPathData.Sections.length; i++) {
-        pathfinder.generateTank(currentPathData.Sections[i].points.length, currentPathData.Sections[i].points, projectSettings.timeStep, currentPathData.Sections[i].options.velocity, currentPathData.Sections[i].options.acceleration, currentPathData.Sections[i].options.jerk, (pathLength, cntrTraj, leftTraj, rghtTraj) => {
+        pathfinder.generateTank(currentPathData.Sections[i].points.length, currentPathData.Sections[i].points, projectSettings.timeStep, currentPathData.Sections[i].options.velocity, currentPathData.Sections[i].options.acceleration, currentPathData.Sections[i].options.jerk, projectSettings.wheelBase, (pathLength, cntrTraj, leftTraj, rghtTraj) => {
           while (i != finishedIndex) {
 
           }
@@ -923,7 +923,7 @@ ipc.on('menu-Export', (event, message) => {
           var finishedIndex = 0;
 
           for (let i = 0; i < currentPathData.Sections.length; i++) {
-            pathfinder.generateTank(pathJSONData.Sections[i].points.length, pathJSONData.Sections[i].points, projectSettings.timeStep, pathJSONData.Sections[i].options.velocity, pathJSONData.Sections[i].options.acceleration, pathJSONData.Sections[i].options.jerk, (pathLength, cntrTraj, leftTraj, rghtTraj) => {
+            pathfinder.generateTank(pathJSONData.Sections[i].points.length, pathJSONData.Sections[i].points, projectSettings.timeStep, pathJSONData.Sections[i].options.velocity, pathJSONData.Sections[i].options.acceleration, pathJSONData.Sections[i].options.jerk, projectSettings.wheelBase, (pathLength, cntrTraj, leftTraj, rghtTraj) => {
               while (i != finishedIndex) {
 
               }
@@ -1040,7 +1040,10 @@ async function chooseProject() {
       if (newProject) {
         var defaultProjectSettingsJson = {
           "teamnumber":9999,
-          "timeStep":0.02
+          "timeStep":0.02,
+          "wheelBase": 0.6,
+          "velocityOutput": "velocity * 1",
+          "distanceOutput": "distance * 1"
         }
         fs.writeFileSync(newprojectDir + "/settings.json", JSON.stringify(defaultProjectSettingsJson));
         fs.mkdirSync(newprojectDir + "/paths/");
