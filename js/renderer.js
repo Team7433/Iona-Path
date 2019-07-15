@@ -851,29 +851,37 @@ ipc.on('menu-Export-Path', (event, message) => {
           }
           for (let b = 0; b < pathLength; b++) {
             var currentStep = [];
+            var leftVel = leftTraj[b].velocity;
+            var rightVel = rghtTraj[b].velocity;
+            var leftDis = leftTraj[b].distance;
+            var rightDis = rghtTraj[b].distance;
+            leftVel = eval(projectSettings.velocityOutput.replace("velocity", "leftVel"));
+            rightVel = eval(projectSettings.velocityOutput.replace("velocity", "rightVel"));
+            leftDis = eval(projectSettings.distanceOutput.replace("distance", "leftDis"));
+            rightDis = eval(projectSettings.distanceOutput.replace("distance", "rightDis"));
             if (currentPathData.Sections[i].inverted == true) {
               if (currentPathData.Sections[i].switchSides == true) {
-                currentStep[2] = lastpoint[0] - leftTraj[b].distance;
-                currentStep[3] = -leftTraj[b].velocity;
-                currentStep[0] = lastpoint[0] - rghtTraj[b].distance;
-                currentStep[1] = -rghtTraj[b].velocity;
+                currentStep[2] = lastpoint[2] - leftDis;
+                currentStep[3] = -leftVel;
+                currentStep[0] = lastpoint[0] - rightDis;
+                currentStep[1] = -rightVel;
               } else {
-                currentStep[0] = lastpoint[0] - leftTraj[b].distance;
-                currentStep[1] = -leftTraj[b].velocity;
-                currentStep[2] = lastpoint[0] - rghtTraj[b].distance;
-                currentStep[3] = -rghtTraj[b].velocity;
+                currentStep[0] = lastpoint[0] - leftDis;
+                currentStep[1] = -leftVel;
+                currentStep[2] = lastpoint[0] - rightDis;
+                currentStep[3] = -rightVel;
               }
             } else {
               if (currentPathData.Sections[i].switchSides == true) {
-                currentStep[2] = lastpoint[0] + leftTraj[b].distance;
-                currentStep[3] = leftTraj[b].velocity;
-                currentStep[0] = lastpoint[2] + rghtTraj[b].distance;
-                currentStep[1] = rghtTraj[b].velocity;
+                currentStep[2] = lastpoint[2] + leftDis;
+                currentStep[3] = leftVel;
+                currentStep[0] = lastpoint[0] + rightDis;
+                currentStep[1] = rightVel;
               } else {
-                currentStep[0] = lastpoint[0] + leftTraj[b].distance;
-                currentStep[1] = leftTraj[b].velocity;
-                currentStep[2] = lastpoint[2] + rghtTraj[b].distance;
-                currentStep[3] = rghtTraj[b].velocity;
+                currentStep[0] = lastpoint[0] + leftDis;
+                currentStep[1] = leftVel;
+                currentStep[2] = lastpoint[2] + rightDis;
+                currentStep[3] = rightVel;
               }
             }
             exportArray.push(currentStep);
@@ -922,10 +930,10 @@ ipc.on('menu-Export', (event, message) => {
           var exportArray = [];
           var finishedIndex = 0;
 
-          for (let i = 0; i < currentPathData.Sections.length; i++) {
+          for (let i = 0; i < pathJSONData.Sections.length; i++) {
             pathfinder.generateTank(pathJSONData.Sections[i].points.length, pathJSONData.Sections[i].points, projectSettings.timeStep, pathJSONData.Sections[i].options.velocity, pathJSONData.Sections[i].options.acceleration, pathJSONData.Sections[i].options.jerk, projectSettings.wheelBase, (pathLength, cntrTraj, leftTraj, rghtTraj) => {
               while (i != finishedIndex) {
-
+    
               }
               var lastpoint = exportArray[exportArray.length - 1];
               if (lastpoint == undefined) {
@@ -933,38 +941,47 @@ ipc.on('menu-Export', (event, message) => {
               }
               for (let b = 0; b < pathLength; b++) {
                 var currentStep = [];
-                if (currentPathData.Sections[i].inverted == true) {
-                  if (currentPathData.Sections[i].switchSides == true) {
-                    currentStep[2] = lastpoint[0] - leftTraj[b].distance;
-                    currentStep[3] = -leftTraj[b].velocity;
-                    currentStep[0] = lastpoint[0] - rghtTraj[b].distance;
-                    currentStep[1] = -rghtTraj[b].velocity;
+                var leftVel = leftTraj[b].velocity;
+                var rightVel = rghtTraj[b].velocity;
+                var leftDis = leftTraj[b].distance;
+                var rightDis = rghtTraj[b].distance;
+                leftVel = eval(projectSettings.velocityOutput.replace("velocity", "leftVel"));
+                rightVel = eval(projectSettings.velocityOutput.replace("velocity", "rightVel"));
+                leftDis = eval(projectSettings.distanceOutput.replace("distance", "leftDis"));
+                rightDis = eval(projectSettings.distanceOutput.replace("distance", "rightDis"));
+                if (pathJSONData.Sections[i].inverted == true) {
+                  if (pathJSONData.Sections[i].switchSides == true) {
+                    currentStep[2] = lastpoint[2] - leftDis;
+                    currentStep[3] = -leftVel;
+                    currentStep[0] = lastpoint[0] - rightDis;
+                    currentStep[1] = -rightVel;
                   } else {
-                    currentStep[0] = lastpoint[0] - leftTraj[b].distance;
-                    currentStep[1] = -leftTraj[b].velocity;
-                    currentStep[2] = lastpoint[0] - rghtTraj[b].distance;
-                    currentStep[3] = -rghtTraj[b].velocity;
+                    currentStep[0] = lastpoint[0] - leftDis;
+                    currentStep[1] = -leftVel;
+                    currentStep[2] = lastpoint[0] - rightDis;
+                    currentStep[3] = -rightVel;
                   }
                 } else {
-                  if (currentPathData.Sections[i].switchSides == true) {
-                    currentStep[2] = lastpoint[0] + leftTraj[b].distance;
-                    currentStep[3] = leftTraj[b].velocity;
-                    currentStep[0] = lastpoint[2] + rghtTraj[b].distance;
-                    currentStep[1] = rghtTraj[b].velocity;
+                  if (pathJSONData.Sections[i].switchSides == true) {
+                    currentStep[2] = lastpoint[2] + leftDis;
+                    currentStep[3] = leftVel;
+                    currentStep[0] = lastpoint[0] + rightDis;
+                    currentStep[1] = rightVel;
                   } else {
-                    currentStep[0] = lastpoint[0] + leftTraj[b].distance;
-                    currentStep[1] = leftTraj[b].velocity;
-                    currentStep[2] = lastpoint[2] + rghtTraj[b].distance;
-                    currentStep[3] = rghtTraj[b].velocity;
+                    currentStep[0] = lastpoint[0] + leftDis;
+                    currentStep[1] = leftVel;
+                    currentStep[2] = lastpoint[2] + rightDis;
+                    currentStep[3] = rightVel;
                   }
                 }
                 exportArray.push(currentStep);
               }
-
-
+    
+              console.log(exportArray);
+    
               finishedIndex++;
-
-              if (i == currentPathData.Sections.length - 1) {
+    
+              if (i == pathJSONData.Sections.length - 1) {
                 fs.writeFile(folderDir + '/' + pathJSONData.Name + ".csv", Papa.unparse(exportArray, { quotes: false }), (err) => {
                   if (err) {
                     console.log("An error occured while export path to File.");
@@ -972,7 +989,7 @@ ipc.on('menu-Export', (event, message) => {
                   }
                 })
               }
-
+    
             }, (err) => {
               console.log(err);
             });

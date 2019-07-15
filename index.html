@@ -159,8 +159,12 @@
               <input type="number" ng-model="project.timeStep" ng-blur="updateProjectSettings()">
             </div>
             <div class="setting">
-              <span class="setting-text">Eval</span>
-              <input type="text" ng-model="evalString" ng-blur="testThing()">
+              <span class="setting-text">Velocity Output</span>
+              <input type="text" ng-model="project.velocityOutput" ng-blur="updateProjectSettings()">
+            </div>
+            <div class="setting">
+              <span class="setting-text">Distance Output</span>
+              <input type="text" ng-model="project.distanceOutput" ng-blur="updateProjectSettings()">
             </div>
             <div class="setting">
               <span class="setting-text">Robot Type</span>
