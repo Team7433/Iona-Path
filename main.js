@@ -8,6 +8,11 @@ const fs = require('fs')
 
 require('electron-reload')(__dirname, {ignored: /ExampleProject|[\/\\]\./});
 
+const APP_ICON = path.join(__dirname, './assets/Icons', 'Icon');
+
+const iconPath = () => {
+	return APP_ICON + (process.platform === 'win32' ? '.ico' : '.icns');
+};
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -18,6 +23,7 @@ function createWindow () {
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 700,
+    icon: iconPath(),
     webPreferences: {
       nodeIntegration: true
     },
