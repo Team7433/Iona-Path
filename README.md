@@ -30,7 +30,7 @@ npm run package-mac
 npm run package-win
 
 # Linix
-npm run package-linix
+npm run package-linux
 ```
 
 
