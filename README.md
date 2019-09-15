@@ -1,14 +1,10 @@
 # Iona-Path
 
-**This app uses Jaci's Pathfinder to generate paths**
+Iona Path is a UI and all in one tool to generate motion profile paths using [Jaci's Pathfinder](https://github.com/JacisNonsense/Pathfinder) through a Port to [Node.js](https://nodejs.org). Iona Path can generate multiple different paths in a project with different sections in a single path allowing you to go backwards then forwards in the same path. It generates a path for each wheel which is saved into a ```.csv``` file which can be automatically sent to the Robot over FTP
 
 ## Getting Started
 
 Download the latest [release](https://github.com/Team7433/Iona-Path/releases)
-
-Unzip the contence 
-
-Run the 
 
 ## Modifing
 
