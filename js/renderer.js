@@ -6,7 +6,7 @@ const ipc = require('electron').ipcRenderer;
 const fs = require('fs');
 const Papa = require('papaparse');
 const Sortable = require('sortablejs');
-var Client = require('node-ftp');
+var Client = require('ftp');
 
 var angularApp = angular.module("myApp", []);
 
@@ -868,7 +868,7 @@ ipc.on('menu-Export-Path', (event, message) => {
               } else {
                 currentStep[0] = lastpoint[0] - leftDis;
                 currentStep[1] = -leftVel;
-                currentStep[2] = lastpoint[0] - rightDis;
+                currentStep[2] = lastpoint[2] - rightDis;
                 currentStep[3] = -rightVel;
               }
             } else {
@@ -958,7 +958,7 @@ ipc.on('menu-Export', (event, message) => {
                   } else {
                     currentStep[0] = lastpoint[0] - leftDis;
                     currentStep[1] = -leftVel;
-                    currentStep[2] = lastpoint[0] - rightDis;
+                    currentStep[2] = lastpoint[2] - rightDis;
                     currentStep[3] = -rightVel;
                   }
                 } else {
@@ -1094,4 +1094,79 @@ ipc.on('open-recent', (event, directory) => {
   UpdatePath();
   SetPoints();
   document.getElementById('MagicUpdater').click();
+})
+
+ipc.on('menu-Robot-Path', (event, message) => {
+      var exportArray = [];
+      var finishedIndex = 0;
+      for (let i = 0; i < currentPathData.Sections.length; i++) {
+        pathfinder.generateTank(currentPathData.Sections[i].points.length, currentPathData.Sections[i].points, projectSettings.timeStep, currentPathData.Sections[i].options.velocity, currentPathData.Sections[i].options.acceleration, currentPathData.Sections[i].options.jerk, projectSettings.wheelBase, (pathLength, cntrTraj, leftTraj, rghtTraj) => {
+          while (i != finishedIndex) {
+
+          }
+          var lastpoint = exportArray[exportArray.length - 1];
+          if (lastpoint == undefined) {
+            lastpoint = [0, 0, 0, 0];
+          }
+          for (let b = 0; b < pathLength; b++) {
+            var currentStep = [];
+            var leftVel = leftTraj[b].velocity;
+            var rightVel = rghtTraj[b].velocity;
+            var leftDis = leftTraj[b].distance;
+            var rightDis = rghtTraj[b].distance;
+            leftVel = eval(projectSettings.velocityOutput.replace("velocity", "leftVel"));
+            rightVel = eval(projectSettings.velocityOutput.replace("velocity", "rightVel"));
+            leftDis = eval(projectSettings.distanceOutput.replace("distance", "leftDis"));
+            rightDis = eval(projectSettings.distanceOutput.replace("distance", "rightDis"));
+            if (currentPathData.Sections[i].inverted == true) {
+              if (currentPathData.Sections[i].switchSides == true) {
+                currentStep[2] = lastpoint[2] - leftDis;
+                currentStep[3] = -leftVel;
+                currentStep[0] = lastpoint[0] - rightDis;
+                currentStep[1] = -rightVel;
+              } else {
+                currentStep[0] = lastpoint[0] - leftDis;
+                currentStep[1] = -leftVel;
+                currentStep[2] = lastpoint[0] - rightDis;
+                currentStep[3] = -rightVel;
+              }
+            } else {
+              if (currentPathData.Sections[i].switchSides == true) {
+                currentStep[2] = lastpoint[2] + leftDis;
+                currentStep[3] = leftVel;
+                currentStep[0] = lastpoint[0] + rightDis;
+                currentStep[1] = rightVel;
+              } else {
+                currentStep[0] = lastpoint[0] + leftDis;
+                currentStep[1] = leftVel;
+                currentStep[2] = lastpoint[2] + rightDis;
+                currentStep[3] = rightVel;
+              }
+            }
+            exportArray.push(currentStep);
+          }
+
+          console.log(exportArray);
+
+          finishedIndex++;
+          
+
+          var c = new Client();
+          c.on('ready', function() {
+            c.put(Papa.unparse(exportArray, { quotes: false }) ,'/home/lvuser/Profiles/' + currentPath.name + '.csv', function(err) {
+              if (err) throw err;
+              c.end();
+            })
+          })
+          
+          if (i == currentPathData.Sections.length - 1) {
+            c.connect({
+              host: projectSettings.teamnumber
+            });
+          }
+
+        }, (err) => {
+          console.log(err);
+        });
+      }
 })

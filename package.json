@@ -6,8 +6,8 @@
   "scripts": {
     "start": "electron .",
     "electron-rebuild": "DEBUG=electron-rebuild electron-rebuild -w pathfinder1-jaci-js -v 5.0.2 ",
-    "package-mac": "electron-packager . --platform=darwin --icon=assets/Icons/icon.icns --out=release-builds/",
-    "package-win": "electron-packager . iona-path --overwrite --asar=true --platform=win32 --arch=ia32 --icon=assets/Icons/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Iona Path\"",
+    "package-mac": "electron-packager . 'Iona Path' --platform=darwin --icon=assets/Icons/icon.icns --out=release-builds/",
+    "package-win": "electron-packager . --overwrite --platform=win32 --arch=ia32 --icon=assets/Icons/icon.ico --prune=true --out=release-builds",
     "package-linux": "electron-packager . iona-path --overwrite --asar=true --platform=linux --arch=x64 --icon=assets/icons/png/1024x1024.png --prune=true --out=release-builds"
   },
   "author": "GitHub",
@@ -20,8 +20,8 @@
   "dependencies": {
     "angular": "^1.7.8",
     "electron-reload": "^1.4.0",
+    "ftp": "^0.3.10",
     "node-abi": "^2.9.0",
-    "node-ftp": "^0.3.10",
     "papaparse": "^5.0.0",
     "pathfinder1-jaci-js": "^1.0.16",
     "sortablejs": "^1.10.0-rc3"
